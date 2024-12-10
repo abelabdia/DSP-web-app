@@ -48,10 +48,31 @@
   </style>
 </head>
 <body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: rgba(87, 181, 224, 0.137);">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Signal Processing App</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav" >
+          <li class="nav-item">
+            <a class="nav-link" href="index.html" >Convolution</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="fft.html">FFT</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="filters.html">Filters</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
   <div class="container">
     <h1 class="text-center">Signal Processing Application</h1>
     <p class="text-center text-muted">Input two signals to visualize their convolution</p>
-
+    
     <form id="signal-form" class="mb-5">
       <h2>Input Signals</h2>
       <div class="row mb-3">
@@ -100,6 +121,7 @@
 
   <script>
 function plotSignal(data, divId, title) {
+
   // Create the bar trace
   const barTrace = {
     x: data.x,
@@ -126,7 +148,7 @@ function plotSignal(data, divId, title) {
   };
 
   // Plot both traces
-  Plotly.newPlot(divId, [barTrace, scatterTrace], {
+  Plotly.react(divId, [barTrace, scatterTrace], {
     title: title,
     xaxis: { title: 'Sample Index' },
     yaxis: { 
