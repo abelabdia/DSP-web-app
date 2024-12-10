@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return send_file("index.html")  # Serve the HTML file
+    return send_file("Convolution.html")  # Serve the HTML file
 
 @app.route("/process-signals", methods=["POST"])
 def process_signals():
