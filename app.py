@@ -68,7 +68,36 @@ def calculate_fft():
     return jsonify(result)
 
 
+def generate_signal(fs, duration, frequencies, amplitudes):
+    t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+    signal = np.zeros_like(t)
+    for f, a in zip(frequencies, amplitudes):
+        signal += a * np.sin(2 * np.pi * f * t)
+    return t, signal
+
+def low_pass_filter(data, cutoff, fs, order=5):
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff / nyquist
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return lfilter(b, a, data)
+
+@app.route('/process_signal1', methods=['POST'])
+def process_signal1():
+    fs = int(request.form['fs'])
+    duration = float(request.form['duration'])
+    frequencies = list(map(float, request.form['frequencies'].split(',')))
+    amplitudes = list(map(float, request.form['amplitudes'].split(',')))
+    cutoff = float(request.form['cutoff'])
+    order = int(request.form['order'])
     
+    t, signal = generate_signal(fs, duration, frequencies, amplitudes)
+    filtered_signal = low_pass_filter(signal, cutoff, fs, order)
+    
+    return jsonify({
+        'time': t.tolist(),
+        'original': signal.tolist(),
+        'filtered': filtered_signal.tolist()
+    }   )
 
 
 

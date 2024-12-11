@@ -163,6 +163,36 @@ h2 {
     font-size: 22px;
     margin-top: 20px;
 }
+#functionPlot, #fftPlot {
+    width: 100%; /* Adjust to the parent container */
+    height: 400px; /* Set an appropriate height */
+}
+
+.wrapper{
+  height: '20'px;
+  width: 50%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF;
+  border-radius: 12px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+.wrapper span{
+  width: 100%;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.wrapper span.num{
+  font-size: 50px;
+  border-right: 2px solid rgba(0,0,0,0.2);
+  border-left: 2px solid rgba(0,0,0,0.2);
+  pointer-events: none;
+}
 footer { background-color: rgb(28, 0, 155); text-align: center; bottom: 0; position:fixed; width: 100%; left: 0;}
   </style>
 </head>
@@ -183,23 +213,29 @@ footer { background-color: rgb(28, 0, 155); text-align: center; bottom: 0; posit
     
     <form id="fft-form" class="mb-5">
       <h2>Input Signal</h2>
-        <div class="row mb-3">
+      <div class="row mb-3">
           <div class="col">
-           <div class="form-floating">
-             <input
-              type="text"
-              id="function"
-              name="function"
-              class="form-control"
-              placeholder="sin(2*pi*1000*t)+cos(2*pi*2000*t)"
-              required>
-              <label for="function">Original Signal</label>
-           </div>
+              <div class="form-floating">
+                  <input
+                      type="text"
+                      id="function"
+                      name="function"
+                      class="form-control"
+                      placeholder="np.sin(2*np.pi*x) + np.cos(4*np.pi*x)"
+                      required>
+                      <div class="wrapper">
+                        <span class="minus">-</span>
+                        <span class="num">01</span>
+                        <span class="plus">+</span>
+                      </div>
+                  <label for="function">Original Signal (e.g., np.sin(2*np.pi*x) + np.cos(4*np.pi*x))</label>
+              </div>
           </div>
-        
-        </div>
-      <button type="submit" class="btn btn-primary w-100" style="background-color: rgb(28, 0, 155)">Calculate FFT</button>
-    </form>
+      </div>
+      <button type="submit" class="btn btn-primary w-100" style="background-color: rgb(28, 0, 155)">
+          Calculate FFT
+      </button>
+  </form>
 
     
     <div id="visualization-container" class="d-none" style="padding-bottom: 10%;">

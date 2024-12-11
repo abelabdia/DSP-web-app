@@ -1,5 +1,6 @@
-document.getElementById('fftForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.getElementById('fft-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
     const func = document.getElementById('function').value;
 
     fetch('/calculate-fft', {
@@ -16,7 +17,11 @@ document.getElementById('fftForm').addEventListener('submit', function (event) {
             return;
         }
 
-        // Plot the function
+        // Make the visualization container visible
+        const container = document.getElementById('visualization-container');
+        container.classList.remove('d-none');
+
+        // Plot the original function
         const functionPlot = {
             x: data.x,
             y: data.y,
@@ -47,8 +52,33 @@ document.getElementById('fftForm').addEventListener('submit', function (event) {
             xaxis: { title: 'Frequency (Hz)' },
             yaxis: { title: 'Amplitude' }
         });
+
+        // Resize the plots to ensure they fit their containers
+        window.setTimeout(() => {
+            Plotly.Plots.resize(document.getElementById('functionPlot'));
+            Plotly.Plots.resize(document.getElementById('fftPlot'));
+        }, 100); // Delay to allow container layout to stabilize
     })
     .catch(error => {
         alert('Error: ' + error.message);
     });
 });
+const plus = document.querySelector(".plus"),
+minus = document.querySelector(".minus"),
+num = document.querySelector(".num");
+let a = 1;
+plus.addEventListener("click", ()=>{
+  a++;
+  a = (a < 10) ? "0" + a : a;
+  num.innerText = a;
+});
+minus.addEventListener("click", ()=>{
+  if(a > 1){
+    a--;
+    a = (a < 10) ? "0" + a : a;
+    num.innerText = a;
+  }
+});
+
+
+
