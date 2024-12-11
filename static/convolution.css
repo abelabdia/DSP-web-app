@@ -72,6 +72,10 @@
     border-radius: 15px;
     overflow: hidden;
 }
+nav{
+  top: 0; position:fixed;
+  z-index: 5;
+}
 nav ul {
   display: flex;
   justify-content: center;
