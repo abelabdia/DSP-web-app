@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 import numpy as np
 from scipy.fftpack import fft
+from scipy.signal import butter, lfilter
 
 
 app = Flask(__name__)
@@ -68,14 +69,15 @@ def calculate_fft():
     return jsonify(result)
 
 
+
+# Helper function: Signal generation
 def generate_signal(fs, duration, frequencies, amplitudes):
     t = np.linspace(0, duration, int(fs * duration), endpoint=False)
-    signal = np.zeros_like(t)
-    for f, a in zip(frequencies, amplitudes):
-        signal += a * np.sin(2 * np.pi * f * t)
+    signal = sum(amplitude * np.sin(2 * np.pi * freq * t) for freq, amplitude in zip(frequencies, amplitudes))
     return t, signal
 
-def low_pass_filter(data, cutoff, fs, order=5):
+# Helper function: Low-pass filter
+def low_pass_filter(data, cutoff, fs, order):
     nyquist = 0.5 * fs
     normal_cutoff = cutoff / nyquist
     b, a = butter(order, normal_cutoff, btype='low', analog=False)
@@ -83,23 +85,39 @@ def low_pass_filter(data, cutoff, fs, order=5):
 
 @app.route('/process_signal1', methods=['POST'])
 def process_signal1():
-    fs = int(request.form['fs'])
-    duration = float(request.form['duration'])
-    frequencies = list(map(float, request.form['frequencies'].split(',')))
-    amplitudes = list(map(float, request.form['amplitudes'].split(',')))
-    cutoff = float(request.form['cutoff'])
-    order = int(request.form['order'])
-    
-    t, signal = generate_signal(fs, duration, frequencies, amplitudes)
-    filtered_signal = low_pass_filter(signal, cutoff, fs, order)
-    
-    return jsonify({
-        'time': t.tolist(),
-        'original': signal.tolist(),
-        'filtered': filtered_signal.tolist()
-    }   )
+    try:
+        # Parse input values
+        fs = int(request.form['fs'])
+        duration = float(request.form['duration'])
+        frequencies = list(map(float, request.form['frequencies'].split(',')))
+        amplitudes = list(map(float, request.form['amplitudes'].split(',')))
+        cutoff = float(request.form['cutoff'])
+        order = int(request.form['order'])
 
+        # Validate inputs
+        if len(frequencies) != len(amplitudes):
+            raise ValueError("Frequencies and amplitudes must have the same length.")
+        if fs <= 0 or duration <= 0 or cutoff <= 0 or order <= 0:
+            raise ValueError("All input values must be positive numbers.")
+        if cutoff >= fs / 2:
+            raise ValueError("Cutoff frequency must be less than Nyquist frequency (fs/2).")
 
+        # Generate and filter the signal
+        t, signal = generate_signal(fs, duration, frequencies, amplitudes)
+        filtered_signal = low_pass_filter(signal, cutoff, fs, order)
+
+        # Return JSON response
+        return jsonify({
+            'time': t.tolist(),
+            'original': signal.tolist(),
+            'filtered': filtered_signal.tolist()
+        })
+
+    except Exception as e:
+        # Log the error and return error message
+        print(f"Error: {e}")
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)
+
