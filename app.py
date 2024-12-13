@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_file
 import numpy as np
+from numpy import sin, cos,pi
 from scipy.fftpack import fft
 from scipy.signal import butter, lfilter
 
